@@ -1,4 +1,4 @@
-# Flow Matching with Conv1D
+# Flow Matching with Conv1D Pathway1
 
 This directory contains the implementation of flow matching using 1D convolutional neural networks for gravitational wave parameter estimation.
 

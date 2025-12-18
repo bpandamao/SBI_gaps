@@ -32,7 +32,7 @@ NORMALIZATION_FILE = os.path.join(f"outputs/run_{RUN_INDEX}", "model_info.npz")
 # Stage 2 (Flow Matcher) Config
 FM_EPOCHS = 300
 FM_LR = 1e-4
-FM_CHECKPOINT_DIR = f"outputs/run_{RUN_INDEX}/flow_matcher2"
+FM_CHECKPOINT_DIR = f"outputs/run_{RUN_INDEX}/flow_matcher"
 FM_MODEL_FILE = os.path.join(FM_CHECKPOINT_DIR, "flow_matcher_bottleneck_final.pt")
 FM_LOSS_PLOT_FILE = os.path.join(FM_CHECKPOINT_DIR, f"fm_loss_{RUN_INDEX}.png")
 FM_STRUCTURE_FILE = os.path.join(FM_CHECKPOINT_DIR, f"fm_structure_{RUN_INDEX}.txt")

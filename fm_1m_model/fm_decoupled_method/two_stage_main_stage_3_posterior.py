@@ -32,7 +32,7 @@ DCAE_MODEL_FILE = os.path.join(DCAE_CHECKPOINT_DIR, "dcae_final.pt")
 NORMALIZATION_FILE = os.path.join(f"outputs/run_{RUN_INDEX}", "model_info.npz")
 
 # Stage 2 (Flow Matcher) Config
-FM_CHECKPOINT_DIR = f"outputs/run_{RUN_INDEX}/flow_matcher2"
+FM_CHECKPOINT_DIR = f"outputs/run_{RUN_INDEX}/flow_matcher"
 FM_MODEL_FILE = os.path.join(FM_CHECKPOINT_DIR, "flow_matcher_bottleneck_final.pt")
 
 # General Config

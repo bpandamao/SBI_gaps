@@ -64,7 +64,7 @@ This trains the flow matching model using the frozen encoder from Stage 1.
 - `FM_LR`: Learning rate (default: 1e-4)
 - `BATCH_SIZE`: Batch size (default: 128)
 
-**Outputs**: Saved in `outputs/run_{RUN_INDEX}/flow_matcher2/`
+**Outputs**: Saved in `outputs/run_{RUN_INDEX}/flow_matcher/`
 
 ### Stage 3: Posterior Analysis
 

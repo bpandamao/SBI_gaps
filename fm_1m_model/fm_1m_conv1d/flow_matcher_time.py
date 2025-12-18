@@ -45,9 +45,6 @@ class ContinuousFlowMatcherTime(nn.Module):
             posterior_kwargs={
                 "output_dim": param_dim,
                 "hidden_dims": (512,256, 128, 64),
-                "svd": {
-                    "size": 1024,
-                },
                 "param_hidden_dims": (64, 128, 256),
                 "param_embedding_dim": 256,
             },

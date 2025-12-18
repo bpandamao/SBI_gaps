@@ -143,7 +143,6 @@ class SignalContinuousFlowModel(nn.Module):
         param_embedding_net: nn.Module,
         signal_dim: int,
         hidden_dims: Tuple[int, ...],
-        svd: dict, # Note: SVD dict is no longer used by the new embedding but kept for API consistency
         activation: Callable = nn.SiLU(),
         batch_norm: bool = True,
         dropout: float = 0.0,
@@ -154,7 +153,6 @@ class SignalContinuousFlowModel(nn.Module):
             signal_dim=signal_dim,
             output_dim=hidden_dims,
             hidden_dims=hidden_dims,
-            svd=svd,
             activation=activation,
             dropout=dropout,
             batch_norm=batch_norm,
@@ -190,7 +188,6 @@ def create_signal_embedding_net(
     signal_dim: int,
     output_dim: int,
     hidden_dims: Tuple[int, ...],
-    svd: dict, # No longer used, but kept for API consistency
     activation: Callable = nn.SiLU(),
     dropout: float = 0.0,
     batch_norm: bool = True,
@@ -245,7 +242,6 @@ def create_signal_cf_model(
         param_embedding_net=param_embedding_net,
         signal_dim=signal_dim,
         hidden_dims=hidden_dims,
-        svd=posterior_kwargs.get("svd", {"size": 256}),
         activation=activation,
         batch_norm=batch_norm,
         dropout=dropout,

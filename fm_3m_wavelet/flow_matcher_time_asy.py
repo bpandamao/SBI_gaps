@@ -50,7 +50,6 @@ class ContinuousFlowMatcherTime(nn.Module):
                 "output_dim": param_dim,
                 # These hidden dimensions are for the final ResidualNet that combines parameter and signal info
                 "hidden_dims": (1024,1024,512,256,128),#512, 256, 128, 64),
-                "svd": { "size": 1024 },
                  # These hidden dimensions are for the network that embeds the parameters (theta)
                 "param_hidden_dims": (64,128,256,512),
                 "param_embedding_dim": 512,#256
