@@ -154,10 +154,6 @@ If you use this code, please cite the associated paper (if available) and acknow
 
 This is a research codebase. For questions or issues, please open an issue on GitHub.
 
-## 📄 License
-
-[Add your license here]
-
 ---
 
 ## 🎯 Method Selection Guide
