@@ -101,7 +101,6 @@ Each subdirectory contains detailed README files:
 - [`fm_1m_model/fm_maf/README.md`](fm_1m_model/fm_maf/README.md) - MAF method details
 - [`fm_1m_model/fm_decoupled_method/README.md`](fm_1m_model/fm_decoupled_method/README.md) - Decoupled method details
 - [`fm_3m_wavelet/README.md`](fm_3m_wavelet/README.md) - Wavelet spectrogram method details
-- [`fm_3m_wavelet/QUICK_START.md`](fm_3m_wavelet/QUICK_START.md) - Quick start guide
 - [`fm_3m_wavelet/KERNEL_TYPES.md`](fm_3m_wavelet/KERNEL_TYPES.md) - Kernel architecture details
 
 ## 🛠️ Requirements

@@ -1,0 +1,22 @@
+# Core dependencies
+torch>=1.9.0
+numpy>=1.21.0
+cupy-cuda11x>=10.0.0  # Adjust CUDA version as needed
+matplotlib>=3.4.0
+tqdm>=4.62.0
+
+# Flow matching and normalizing flows
+flow-matching>=0.1.0
+glasflow>=0.1.0  # For MAF implementation
+
+# LISA tools
+lisatools>=0.1.0
+fastlisaresponse>=0.1.0
+
+# Visualization
+corner>=2.2.0
+
+# Optional: Jupyter for notebooks
+# jupyter>=1.0.0
+# ipykernel>=6.0.0
+
