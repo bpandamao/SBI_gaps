@@ -1,12 +1,12 @@
 # Flow Matching for Gravitational Wave Parameter Estimation
 
-This repository contains implementations of flow matching methods for gravitational wave parameter estimation from LISA (Laser Interferometer Space Antenna) data. The codebase includes multiple approaches to handle data gaps, noise, and different signal representations for robust parameter inference.
+This repository contains implementations of flow matching methods for gravitational wave parameter estimation for LISA (Laser Interferometer Space Antenna) data with gaps. The codebase includes multiple approaches to handle high dimensional data gaps, noise, by using different data compression/summarizer for robust parameter inference.
 
 ## 🌟 Overview
 
 This repository provides two main approaches to gravitational wave parameter estimation using flow matching:
 
-1. **Time-Domain Flow Matching** (`fm_1m_model/`): Three different architectures operating directly on time-domain signals
+1. **Time-Domain Flow Matching** (`fm_1m_model/`): Conv1d architectures operating directly on time-domain signals
 2. **Wavelet Spectrogram Flow Matching** (`fm_3m_wavelet/`): Flow matching on wavelet-transformed spectrograms with advanced CNN architectures
 
 Both approaches are designed to handle realistic LISA data conditions including:
@@ -21,13 +21,13 @@ Both approaches are designed to handle realistic LISA data conditions including:
 github/
 ├── fm_1m_model/              # Time-domain flow matching methods
 │   ├── fm_1m_conv1d/         # Conv1D-based flow matching
-│   ├── fm_maf/               # Masked Autoregressive Flow (MAF)
-│   ├── fm_decoupled_method/  # Two-stage DCAE + flow matching
-│   └── training_data_generator_30day_new.py
+│   ├── fm_maf/               # Masked Autoregressive Flow (MAF for comparison)
+│   ├── fm_decoupled_method/  # Two-stage DCAE + flow matching (decoupling training for comparison)
+│   └── training_data_generator_30day.py
 │
 └── fm_3m_wavelet/            # Wavelet spectrogram flow matching
     ├── demo_complete_pipeline.py  # Complete end-to-end demo
-    ├── training_data_generator_time_ln_likevb_smaller.py
+    ├── training_data_generator_time_ln_likevb.py
     ├── augment_and_wavelet_gaps_ite_01_VB.py
     └── [model and training files]
 ```
@@ -39,13 +39,13 @@ github/
 Generate training data first:
 ```bash
 cd fm_1m_model
-python training_data_generator_30day_new.py
+python training_data_generator_30day.py
 ```
 
-Then train any of the three methods:
+Then training based on difference methods:
 - **Conv1D**: `cd fm_1m_conv1d && python main_gaps.py`
 - **MAF**: `cd fm_maf && python train_maf_gaps.py`
-- **Decoupled**: Follow the three-stage process in `fm_decoupled_method/`
+- **Decoupled**: Follow the two-stage process in `fm_decoupled_method/`
 
 ### Wavelet Spectrogram Method (`fm_3m_wavelet/`)
 
@@ -61,15 +61,15 @@ python demo_complete_pipeline.py --kernel_type asymmetric --num_samples 100 --nu
 
 | Method | Architecture | Key Features |
 |--------|-------------|--------------|
-| **Conv1D** | 1D CNN + Flow Matching | Direct time-domain processing, handles full signal length (518K samples) |
-| **MAF** | CNN + Masked Autoregressive Flow | Efficient context processing, flexible architecture |
-| **Decoupled** | DCAE (256-dim) + Flow Matching | Memory efficient, two-stage compression approach |
+| **Conv1D** | 1D CNN + Flow Matching | Direct time-domain processing, handles full signal length (518K samples), robust when having gaps |
+| **MAF** | 1d CNN + Masked Autoregressive Flow |
+| **Decoupled** | DCAE (256-dim) + Flow Matching | 
 
 ### Wavelet Spectrogram Method (`fm_3m_wavelet/`)
 
 | Kernel Type | Architecture | Key Features |
 |------------|-------------|--------------|
-| **Symmetric** | 3×3 CNN kernels | Standard convolutions, faster training |
+| **Symmetric** | 3×3 CNN kernels |
 | **Asymmetric** | 3×9 CNN kernels + Dilation | Better temporal modeling, dilated convolutions [1,2,4,8] |
 
 ## 🔬 Key Features
@@ -128,9 +128,9 @@ See [`fm_1m_model/requirements.txt`](fm_1m_model/requirements.txt) for a complet
 
 This codebase is designed for:
 
-1. **Parameter Estimation**: Infer gravitational wave source parameters (amplitude, frequency, frequency derivative) from noisy LISA data
+1. **Parameter Estimation**: Infer gravitational wave source parameters (amplitude, frequency, frequency derivative) from noisy LISA data with gaps
 2. **Gap Handling**: Robust inference with missing data segments
-3. **Method Comparison**: Compare different flow matching architectures
+3. **Method Comparison**: MAF VS FM; Joint training VS Decoupled training; Asymmetric kernel with dilation VS symmetric kernel in summarizer
 4. **Research**: Extend and modify flow matching approaches for gravitational waves
 
 ## 🔍 Output Files
@@ -160,11 +160,10 @@ This is a research codebase. For questions or issues, please open an issue on Gi
 
 **Choose `fm_1m_model/` if:**
 - You want to work directly with time-domain signals
-- You need memory-efficient training (decoupled method)
-- You prefer simpler architectures (Conv1D)
+- The signal dimension is managable
 
 **Choose `fm_3m_wavelet/` if:**
+- High signal dimensionality
+- Non-stationary signal, could try glitches
 - You want to leverage frequency-domain information
-- You need better temporal modeling (asymmetric kernels)
-- You want a complete, easy-to-use pipeline
 

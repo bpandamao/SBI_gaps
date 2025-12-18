@@ -83,16 +83,16 @@ class DataGenerator:
         
         # Import here to avoid issues if module not available
         try:
-            from training_data_generator_time_ln_likevb_smaller import (
+            from training_data_generator_time_ln_likevb import (
                 generate_training_set, NUM_SAMPLES, RUN_ID
             )
         except ImportError:
-            print("ERROR: Could not import training_data_generator_time_ln_likevb_smaller")
+            print("ERROR: Could not import training_data_generator_time_ln_likevb")
             print("Please ensure the module is available.")
             return None
         
         # Modify constants temporarily
-        import training_data_generator_time_ln_likevb_smaller as gen_module
+        import training_data_generator_time_ln_likevb as gen_module
         original_num_samples = gen_module.NUM_SAMPLES
         original_run_id = gen_module.RUN_ID
         

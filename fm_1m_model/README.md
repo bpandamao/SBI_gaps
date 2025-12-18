@@ -6,7 +6,7 @@ This repository contains implementations of three different flow matching method
 
 ```
 fm_1m_model/
-├── training_data_generator_30day_new.py  # Data generation script
+├── training_data_generator_30day.py  # Data generation script
 ├── fm_1m_conv1d/                         # Flow matching with Conv1D
 ├── fm_maf/                               # Flow matching with MAF (Masked Autoregressive Flow)
 └── fm_decoupled_method/                  # Decoupled flow matching with DCAE
@@ -25,7 +25,7 @@ This project implements three different approaches to flow matching for gravitat
 First, generate the training data using:
 
 ```bash
-python training_data_generator_30day_new.py
+python training_data_generator_30day.py
 ```
 
 This will create a dataset of gravitational wave signals with corresponding parameters in the `training_data/` directory.

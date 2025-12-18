@@ -20,7 +20,7 @@ fm_3m_wavelet/
 ├── CLEANUP_SUMMARY.md                 # Code cleanup documentation
 │
 ├── Data Generation:
-│   ├── training_data_generator_time_ln_likevb_smaller.py  # Generate clean signals
+│   ├── training_data_generator_time_ln_likevb.py  # Generate clean signals
 │   └── augment_and_wavelet_gaps_ite_01_VB.py              # Add noise & gaps
 │
 ├── Dataset:
@@ -105,7 +105,7 @@ This allows the model to capture both local and long-range temporal dependencies
 ### 1. Generate Training Data
 
 ```python
-from training_data_generator_time_ln_likevb_smaller import generate_training_set
+from training_data_generator_time_ln_likevb import generate_training_set
 
 # Modify constants in the file or call directly
 generate_training_set()
