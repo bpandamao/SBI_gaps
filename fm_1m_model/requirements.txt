@@ -1,6 +1,7 @@
 # Core dependencies
 torch>=1.9.0
 numpy>=1.21.0
+scipy>=1.7.0
 cupy-cuda11x>=10.0.0  # Adjust CUDA version as needed
 matplotlib>=3.4.0
 tqdm>=4.62.0
