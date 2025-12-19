@@ -13,7 +13,7 @@ from fastlisaresponse import pyResponseTDI, ResponseWrapper
 from lisatools.detector import EqualArmlengthOrbits, ESAOrbits
 
 # Constants
-RUN_ID = "training_set_TIME_ln_S1e4_90d_smallerf002_range_trainnew_ln"
+RUN_ID = "training_set_90d"
 AMPLITUDE_BASE = 1.5e-21
 # AMPLITUDE_SCALE = 1e-21
 FREQUENCY_BASE = 2e-3

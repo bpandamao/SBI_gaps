@@ -33,6 +33,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dataset_wavelet_sub_ite_01_update import prepare_data_from_h5
 from trainer_spectrogramV1 import train_flow_matching_spectrogram
 from model_utils import print_model_structure
+from posterior01 import sample_parameters, analyze_posterior
 
 # Import flow matchers
 from flow_matcher_time import ContinuousFlowMatcherTime as SymmetricFlowMatcher
@@ -64,6 +65,10 @@ def parse_args():
                         help='Use existing data files if available')
     parser.add_argument('--train_subset_ratio', type=float, default=1.0,
                         help='Fraction of training data to use (for faster testing)')
+    parser.add_argument('--sample_posterior', action='store_true',
+                        help='Sample from trained model to get parameter realization')
+    parser.add_argument('--num_posterior_samples', type=int, default=100,
+                        help='Number of samples for posterior estimation')
     return parser.parse_args()
 
 
@@ -303,7 +308,119 @@ class FlowMatchingTrainer:
         # Plot losses
         self._plot_losses(train_losses, test_losses)
         
-        return model, train_losses, test_losses
+        return model, train_losses, test_losses, params_min, params_max, device
+    
+    def sample_posterior(self, model, train_h5_file, test_h5_file, params_min, params_max, 
+                        num_samples=100, device=None):
+        """Sample parameters from the trained model for a test signal"""
+        if device is None:
+            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        
+        print("\n" + "="*70)
+        print("STEP 4: Sampling from Trained Model")
+        print("="*70)
+        
+        # Load a test signal from the dataset
+        print("Loading test signal...")
+        train_loader, test_loader = prepare_data_from_h5(
+            train_h5_path=train_h5_file,
+            test_h5_path=test_h5_file,
+            parameters_min=params_min,
+            parameters_max=params_max,
+            batch_size=1,
+            num_workers=1,
+            train_subset_ratio=1.0
+        )
+        
+        # Get one test sample
+        test_iter = iter(test_loader)
+        test_signal, test_params_true = next(test_iter)
+        
+        test_signal = test_signal.to(device)
+        test_params_true = test_params_true.to(device)
+        
+        # Ensure signal has correct shape for sampling (should be [1, channels, H, W] or [1, H, W])
+        if test_signal.dim() == 2:
+            test_signal = test_signal.unsqueeze(0)  # Add batch dimension
+        elif test_signal.dim() == 3 and test_signal.shape[0] != 1:
+            test_signal = test_signal.unsqueeze(0)  # Add batch dimension if missing
+        
+        print(f"Test signal shape: {test_signal.shape}")
+        print(f"True parameters (normalized): {test_params_true.squeeze().cpu().numpy()}")
+        
+        # Denormalize true parameters for display
+        true_params_denorm = test_params_true.squeeze().cpu().numpy() * (params_max - params_min) + params_min
+        true_params_tensor = torch.tensor(true_params_denorm, dtype=torch.float32).unsqueeze(0)
+        
+        print(f"True parameters (denormalized):")
+        print(f"  log10(Amplitude): {true_params_denorm[0]:.6f}")
+        print(f"  log(Frequency): {true_params_denorm[1]:.6f}")
+        print(f"  log(Frequency_deriv): {true_params_denorm[2]:.6f}")
+        
+        # Sample from the model and create corner plot
+        print(f"\nSampling {num_samples} parameter realizations...")
+        model.eval()
+        
+        # Use analyze_posterior which handles sampling and creates corner plot
+        sampled_params_denorm, corner_fig = analyze_posterior(
+            model=model,
+            signal=test_signal,
+            true_params=true_params_tensor,
+            parameters_min=params_min,
+            parameters_max=params_max,
+            n_samples=num_samples,
+            device=device
+        )
+        
+        # Compute statistics
+        param_mean = np.mean(sampled_params_denorm, axis=0)
+        param_std = np.std(sampled_params_denorm, axis=0)
+        param_median = np.median(sampled_params_denorm, axis=0)
+        
+        print("\nSampled Parameter Statistics:")
+        param_names = ['log10(Amplitude)', 'log(Frequency)', 'log(Frequency_deriv)']
+        for i, name in enumerate(param_names):
+            print(f"  {name}:")
+            print(f"    Mean: {param_mean[i]:.6f} (True: {true_params_denorm[i]:.6f})")
+            print(f"    Std:  {param_std[i]:.6f}")
+            print(f"    Median: {param_median[i]:.6f}")
+        
+        # Save corner plot
+        corner_plot_file = os.path.join(self.output_dir, "posterior_corner_plot.png")
+        corner_fig.savefig(corner_plot_file, dpi=150, bbox_inches='tight')
+        plt.close(corner_fig)
+        print(f"\n✓ Corner plot saved: {corner_plot_file}")
+        
+        # Save results
+        posterior_file = os.path.join(self.output_dir, "posterior_sample.npz")
+        np.savez(
+            posterior_file,
+            sampled_params=sampled_params_denorm,
+            true_params=true_params_denorm,
+            param_mean=param_mean,
+            param_std=param_std,
+            param_median=param_median,
+            params_min=params_min,
+            params_max=params_max
+        )
+        print(f"\n✓ Posterior samples saved: {posterior_file}")
+        
+        # Save a single realization (first sample)
+        single_realization = sampled_params_denorm[0]
+        realization_file = os.path.join(self.output_dir, "single_realization.txt")
+        with open(realization_file, 'w', encoding='utf-8') as f:
+            f.write("Single Parameter Realization from Trained Model\n")
+            f.write("="*60 + "\n")
+            f.write(f"log10(Amplitude):     {single_realization[0]:.6e}\n")
+            f.write(f"log(Frequency):       {single_realization[1]:.6e}\n")
+            f.write(f"log(Frequency_deriv):  {single_realization[2]:.6e}\n")
+            f.write("\nTrue Parameters:\n")
+            f.write(f"log10(Amplitude):     {true_params_denorm[0]:.6e}\n")
+            f.write(f"log(Frequency):       {true_params_denorm[1]:.6e}\n")
+            f.write(f"log(Frequency_deriv):  {true_params_denorm[2]:.6e}\n")
+        print(f"✓ Single realization saved: {realization_file}")
+        
+        return sampled_params_denorm, true_params_denorm
     
     def _plot_losses(self, train_losses, test_losses):
         """Plot training and validation losses"""
@@ -393,7 +510,19 @@ def main():
             train_subset_ratio=args.train_subset_ratio
         )
         
-        model, train_losses, test_losses = trainer.train(augmented_file)
+        model, train_losses, test_losses, params_min, params_max, device = trainer.train(augmented_file)
+        
+        # Step 4: Sample from trained model (optional)
+        if args.sample_posterior:
+            trainer.sample_posterior(
+                model=model,
+                train_h5_file=augmented_file,
+                test_h5_file=augmented_file,
+                params_min=params_min,
+                params_max=params_max,
+                num_samples=args.num_posterior_samples,
+                device=device
+            )
         
         # Summary
         print("\n" + "="*70)
@@ -401,6 +530,8 @@ def main():
         print("="*70)
         print(f"Final Training Loss: {train_losses[-1]:.6f}")
         print(f"Final Validation Loss: {test_losses[-1]:.6f}")
+        if args.sample_posterior:
+            print(f"\nPosterior sampling completed with {args.num_posterior_samples} samples")
         print(f"\nAll outputs saved to: {args.output_dir}")
         print("="*70)
         

@@ -56,7 +56,7 @@ def print_model_structure(model, filename=None):
     
     # Save to file if filename is provided
     if filename:
-        with open(filename, 'w') as f:
+        with open(filename, 'w', encoding='utf-8') as f:
             f.write("Model Structure:\n")
             f.write(formatted_output)
     

@@ -13,9 +13,9 @@ from pywavelet.types import TimeSeries
 
 # Configuration
 # Modify these constants before running
-INPUT_DATA_FILE = "training_data/fullsignal_training_set_TIME_ln_S2e4_90d_smaller0010005_range_trainnew_ln.npz"
-OUTPUT_H5_FILE = "training_data/au_sp_gaps_90_trainsetvb_ln_smaller0010005_S1e5_ite_01_001_11.h5"
-examplefilename = "example_spectrogram_optimized_90dtrain0010005.png"
+INPUT_DATA_FILE = "training_data/fullsignal_training_set_90d.npz"
+OUTPUT_H5_FILE = "training_data/augmented_spectrograms_90d.h5"
+examplefilename = "example_spectrogram_90d.png"
 NOISE_AUGMENTATIONS = 5  # Number of different noise/gap instances per signal
 N_JOBS = -3  # Number of parallel jobs (-1 = all cores, negative = all but N cores)
 

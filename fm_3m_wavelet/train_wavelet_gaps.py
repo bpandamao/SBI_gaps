@@ -83,9 +83,9 @@ def main():
         pass
 
     # --- Configuration ---
-    TRAIN_DATA_FILE = "training_data/au_sp_gaps_90_trainsetvb_new_ln_smaller001_S1e5_ite_01_001_11.h5" 
-    TEST_DATA_FILE = "training_data/au_sp_gaps_90_testsetvb_new_ln_smaller001_S1e3_ite_01_001_11.h5" #au_sp_gaps_90_testsetvb_ln_smaller001_S1e3_ite_01_001_11.h5"
-    RUN_INDEX = "SP_gaps_update1000epoch_smaller001_asy_11bin_itev3339_90_longer_gapsnew"
+    TRAIN_DATA_FILE = "training_data/augmented_spectrograms_90d_train.h5" 
+    TEST_DATA_FILE = "training_data/augmented_spectrograms_90d_test.h5"
+    RUN_INDEX = "wavelet_gaps_90d"
     NUM_EPOCHS = 1000
     BATCH_SIZE = 128
     NUM_POSTERIOR_SAMPLES = 5000

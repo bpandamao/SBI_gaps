@@ -15,9 +15,8 @@ The pipeline consists of three main steps:
 ```
 fm_3m_wavelet/
 ├── demo_complete_pipeline.py          # Complete demo script (recommended)
+├── train_wavelet_gaps.py              # Main training script
 ├── README.md                          # This file
-├── DEPRECATED.md                      # Deprecated files guide (for reference)
-├── CLEANUP_SUMMARY.md                 # Code cleanup documentation
 │
 ├── Data Generation:
 │   ├── training_data_generator_time_ln_likevb.py  # Generate clean signals
@@ -47,11 +46,22 @@ fm_3m_wavelet/
 Run the complete pipeline with default settings:
 
 ```bash
+# Asymmetric kernels (3x9 convolutions with dilation) - Recommended
+python demo_complete_pipeline.py --kernel_type asymmetric --num_samples 100 --num_epochs 50
+
 # Symmetric kernels (3x3 convolutions with dilation)
 python demo_complete_pipeline.py --kernel_type symmetric --num_samples 100 --num_epochs 50
+```
 
-# Asymmetric kernels (3x9 convolutions with dilation)
-python demo_complete_pipeline.py --kernel_type asymmetric --num_samples 100 --num_epochs 50
+**Quick test with asymmetric kernels and posterior sampling:**
+```bash
+python demo_complete_pipeline.py \
+    --kernel_type asymmetric \
+    --num_samples 10 \
+    --num_epochs 2 \
+    --sample_posterior \
+    --num_posterior_samples 100 \
+    --output_dir test_outputs
 ```
 
 ### Advanced Usage
@@ -66,7 +76,7 @@ python demo_complete_pipeline.py \
     --num_epochs 200 \
     --signal_embedding_dim 512 \
     --output_dir my_experiment \
-    --train_subset_ratio 0.5
+    --train_subset_ratio 0.2
 
 # Use existing data (skip generation)
 python demo_complete_pipeline.py \
@@ -111,7 +121,7 @@ from training_data_generator_time_ln_likevb import generate_training_set
 generate_training_set()
 ```
 
-This creates a `.npz` file with:
+This creates a `.npz` file named `fullsignal_training_set_90d.npz` with:
 - `parameters`: Parameter arrays (log amplitude, log frequency, log frequency derivative)
 - `time_signals`: Clean time-domain signals
 - `time_array`: Time array
@@ -129,12 +139,25 @@ from augment_and_wavelet_gaps_ite_01_VB import augment_and_transform_parallel
 augment_and_transform_parallel()
 ```
 
-This creates an `.h5` file with:
+This creates an `.h5` file named `augmented_spectrograms_90d.h5` with:
 - `parameters`: Original parameters
 - `spectrograms`: Augmented spectrograms (with noise and gaps)
 - Attributes: `spectrogram_min`, `spectrogram_max` for normalization
 
 ### 3. Train Flow Matching Model
+
+**Option A: Using the training script (recommended)**
+
+```bash
+python train_wavelet_gaps.py
+```
+
+Edit the configuration in `train_wavelet_gaps.py` to set:
+- `TRAIN_DATA_FILE`: Path to training H5 file (default: `training_data/augmented_spectrograms_90d_train.h5`)
+- `TEST_DATA_FILE`: Path to test H5 file (default: `training_data/augmented_spectrograms_90d_test.h5`)
+- `NUM_EPOCHS`, `BATCH_SIZE`, etc.
+
+**Option B: Using Python API**
 
 ```python
 from flow_matcher_time_asy import ContinuousFlowMatcherTime
@@ -143,8 +166,8 @@ from trainer_spectrogramV1 import train_flow_matching_spectrogram
 
 # Load data
 train_loader, test_loader = prepare_data_from_h5(
-    train_h5_path="path/to/train.h5",
-    test_h5_path="path/to/test.h5",
+    train_h5_path="training_data/augmented_spectrograms_90d_train.h5",
+    test_h5_path="training_data/augmented_spectrograms_90d_test.h5",
     parameters_min=params_min,
     parameters_max=params_max,
     batch_size=32
