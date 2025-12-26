@@ -2,6 +2,8 @@
 
 This repository contains implementations of flow matching methods for gravitational wave parameter estimation for LISA (Laser Interferometer Space Antenna) data with gaps. The codebase includes multiple approaches to handle high dimensional data gaps, noise, by using different data compression/summarizer for robust parameter inference.
 
+> **📄 Related Paper**: This code accompanies the paper ["Robust and scalable simulation-based inference for gravitational wave signals with gaps"](https://arxiv.org/abs/2512.18290) (arXiv:2512.18290).
+
 ## 🌟 Overview
 
 This repository provides two main approaches to gravitational wave parameter estimation using flow matching:
@@ -145,7 +147,21 @@ After training, models produce:
 
 ## 📝 Citation
 
-If you use this code, please cite the associated paper (if available) and acknowledge the use of:
+If you use this code, please cite our paper:
+
+**Ruiting Mao, Jeong Eun Lee, Matthew C. Edwards**, "Robust and scalable simulation-based inference for gravitational wave signals with gaps", *arXiv preprint* [arXiv:2512.18290](https://arxiv.org/abs/2512.18290) (2025).
+
+### BibTeX
+```bibtex
+@article{mao2025robust,
+  title={Robust and scalable simulation-based inference for gravitational wave signals with gaps},
+  author={Mao, Ruiting and Lee, Jeong Eun and Edwards, Matthew C.},
+  journal={arXiv preprint arXiv:2512.18290},
+  year={2025}
+}
+```
+
+Please also acknowledge the use of:
 - Flow matching methods
 - LISA tools (`lisatools`, `fastlisaresponse`)
 - PyWavelet (for wavelet transforms)
